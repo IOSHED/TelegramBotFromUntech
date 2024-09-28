@@ -11,7 +11,7 @@ from database.db import Base
 class TelegramUser(Base):
     __tablename__ = "telegram_user"
 
-    telegram_id: Mapped[str] = mapped_column(String, nullable=False, unique=True, primary_key=True)
+    telegram_id: Mapped[str] = mapped_column(String, nullable=False, primary_key=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     events: Mapped[List["CustomEvent"]] = relationship("CustomEvent", back_populates="participants",
                                                        cascade="all, delete-orphan")

@@ -86,8 +86,6 @@ async def get_custom_event_by_name(session: AsyncSession, event_name: str) -> Cu
     return event
 
 
-
-
 async def get_latest_custom_quizzes(session: AsyncSession) -> list[CustomQuiz]:
     # Запрос на получение последних 5 созданных CustomQuiz
     result = await session.execute(
@@ -115,11 +113,25 @@ def delete_custom_quiz(session: Session, quiz_id: int) -> None:
 
 # Функция для добавления нового пользователя
 async def add_telegram_user(session: Session, telegram_id: str, is_admin: bool = False) -> TelegramUser:
-    new_user = TelegramUser(telegram_id=telegram_id, is_admin=is_admin)
-    session.add(new_user)
-    await session.commit()  # Используйте await
-    await session.refresh(new_user)  # Используйте await
-    return new_user
+    # Проверяем, существует ли пользователь с таким telegram_id
+    existing_user = await session.execute(
+        select(TelegramUser).where(TelegramUser.telegram_id == telegram_id)
+    )
+    user = existing_user.scalars().first()
+
+    if user:
+        # Если пользователь уже существует и новый is_admin = True, обновляем is_admin
+        if is_admin:
+            user.is_admin = True
+            await session.commit()  # Сохраняем изменения
+        return user
+    else:
+        # Если пользователя нет, добавляем нового
+        new_user = TelegramUser(telegram_id=telegram_id, is_admin=is_admin)
+        session.add(new_user)
+        await session.commit()  # Используйте await
+        await session.refresh(new_user)  # Используйте await
+        return new_user
 
 # Функция для получения пользователя по ID
 async def get_telegram_user(session: Session, user_id: int) -> TelegramUser:
