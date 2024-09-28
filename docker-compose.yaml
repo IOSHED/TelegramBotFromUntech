@@ -1,0 +1,25 @@
+
+services:
+  telegram_bot:
+    build: .
+    container_name: telegram_bot
+    ports:
+      - "8001:8000"
+    depends_on:
+      - postgres_telegram_bot
+    env_file:
+      - .env
+
+  postgres_telegram_bot:
+    image: postgres:12.1-alpine
+    container_name: postgres_telegram_bot
+    ports:
+      - "8002:8000"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=postgres_telegram_bot
+      - POSTGRES_PORT=8000
+    env_file:
+      - .env
