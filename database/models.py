@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, List
+from typing import List
 
 from sqlalchemy import Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -18,6 +18,7 @@ class TelegramUser(Base):
     participate_quiz: Mapped[List["CustomQuiz"]] = relationship("CustomQuiz", back_populates="participants",
                                                                 cascade="all, delete-orphan")
 
+
 class CustomEvent(Base):
     __tablename__ = "custom_event"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -29,6 +30,7 @@ class CustomEvent(Base):
     photo_id: Mapped[str] = mapped_column(String)
 
     participants: Mapped[List[TelegramUser]] = relationship("TelegramUser", back_populates="events")
+
 
 class CustomQuiz(Base):
     __tablename__ = "custom_quiz"

@@ -14,7 +14,7 @@ services:
     image: postgres:12.1-alpine
     container_name: postgres_telegram_bot
     ports:
-      - "8002:8000"
+      - "8010:8000"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password

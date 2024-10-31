@@ -18,8 +18,8 @@ async def main():
 
     await create_tables()
 
-    BOT_TOCKEN = os.environ.get("BOT_TOCKEN")
-    bot = Bot(BOT_TOCKEN)
+    bot_token = os.environ.get("BOT_TOKEN")
+    bot = Bot(bot_token)
     storage_bot = MemoryStorage()
     print(await bot.get_me())
     dp = Dispatcher(storage=storage_bot)
