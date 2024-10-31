@@ -15,11 +15,5 @@ services:
     container_name: postgres_telegram_bot
     ports:
       - "8010:8000"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=postgres
-      - POSTGRES_HOST=postgres_telegram_bot
-      - POSTGRES_PORT=8000
     env_file:
       - .env

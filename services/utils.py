@@ -14,7 +14,7 @@ class UtilsController:
             await add_telegram_user(session, str(id_user))
         welcome_message = (
             "**Добро пожаловать\!**\n"
-            "Я чат-бот для `всероссийских юнармейских военно-спортивных игр`\, "
+            "Я чат\-бот для `всероссийских юнармейских военно\-спортивных игр`\, "
             "который предоставляет актуальную информацию об этом мероприятии\."
         )
         await msg.answer(text=welcome_message, parse_mode=ParseMode.MARKDOWN_V2)

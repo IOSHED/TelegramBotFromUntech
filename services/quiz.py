@@ -4,7 +4,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message
 
 from database.db import async_session
-from database.sql_alchemy import get_latest_custom_quizzes, get_custom_quiz_by_name
+from database.sql_alchemy import get_latest_custom_quizzes, get_custom_quiz_by_name, add_custom_quiz
 
 
 class AnswerQuiz(StatesGroup):
@@ -53,7 +53,8 @@ class QuizController:
                     photo=quiz.photo_id
                 )
                 await message.answer(
-                    "Введите один или несколько правильных ответов.\nНапример:\n"
+                    "Введите один или несколько правильных ответов\.\nНапример:\n```\n1\, 2\n1\n```",
+                    parse_mode=ParseMode.MARKDOWN_V2
                 )
                 await state.update_data(t_answ=quiz.true_answer)
                 await state.set_state(AnswerQuiz.quiz)
@@ -70,6 +71,7 @@ class QuizController:
                 text="Молодец, всё верно!!!",
                 parse_mode=ParseMode.MARKDOWN
             )
+            await state.clear()
         else:
             await message.answer(
                 text="Неверно, попробуй ещё...",
@@ -100,8 +102,8 @@ class QuizController:
         """Sets the description for the newly created quiz."""
         await state.update_data(description=message.text)
         await message.answer(
-            text="Введите варианты ответов.\nНапример:",
-            parse_mode=ParseMode.MARKDOWN
+            text="Введите варианты ответов\.\nНапример\:\n```\n1\. Что-то там\n2\. Что-то там дважды\n```",
+            parse_mode=ParseMode.MARKDOWN_V2
         )
         await state.set_state(Quiz.answers)
 
@@ -110,8 +112,8 @@ class QuizController:
         """Sets the answers for the new quiz."""
         await state.update_data(answers=message.text.split('\n'))
         await message.answer(
-            text="Введите правильные ответы.\nНапример:",
-            parse_mode=ParseMode.MARKDOWN
+            text="Введите правильные ответы\.\nНапример\:\n```\n1\, 3\n2\n```",
+            parse_mode=ParseMode.MARKDOWN_V2
         )
         await state.set_state(Quiz.true_answers)
 
@@ -123,3 +125,22 @@ class QuizController:
             text="Загрузите фотографию для обложки викторины.",
             parse_mode=ParseMode.MARKDOWN
         )
+        await state.set_state(Quiz.photo)
+
+    @staticmethod
+    async def set_quiz_photo(message: Message, state: FSMContext):
+        photo = message.photo[-1].file_id
+        data = await state.get_data()
+        async with async_session() as session:
+            quiz = await add_custom_quiz(session, data['name'], data['description'], data['answers'],
+                                         data['true_answers'], message.from_user.id, photo)
+            ans = ""
+            for a in quiz.answer:
+                ans += a + '\n'
+
+            await message.answer_photo(
+                caption=f"{quiz.name}\n\n{quiz.description}\n\n{ans}\n",
+                parse_mode=ParseMode.MARKDOWN,
+                photo=quiz.photo_id
+            )
+            await state.clear()

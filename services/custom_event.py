@@ -83,7 +83,7 @@ class CustomEventController:
         """Saves the description of the new event."""
         await state.update_data(description=message.text)
         await message.answer(
-            text="Вставьте ссылку на карту Yandex \(сгенерированную здесь\:\nhttps://yandex.ru/map-constructor\) для "
+            text="Вставьте ссылку на карту Yandex \(сгенерированную здесь\:\nhttps\://yandex\.ru/map\-constructor\) для"
                  "продвинутого использования\.\nИли можете ввести координаты \(широта и долгота\)\. "
                  "Например\:\n```\n45.4553457 24.32451\n13.246523 25.3452423\n```",
             parse_mode=ParseMode.MARKDOWN_V2
@@ -118,7 +118,7 @@ class CustomEventController:
             await message.answer("Загрузите фотографию для мероприятия.")
             await state.set_state(CustomEvent.photo)
         except ValueError:
-            await message.answer("Неверный формат времени. Пожалуйста, используйте формат: ``19:00 28.09.2024``.")
+            await message.answer("Неверный формат времени. Пожалуйста, используйте формат: ```19:00 28.09.2024```.")
 
     @staticmethod
     async def create_new_event_photo(message: Message, state: FSMContext):
@@ -129,7 +129,7 @@ class CustomEventController:
             "description": user_data.get("description"),
             "link_map": user_data.get("link_map"),
             "start_at": user_data.get("start_at"),
-            "photo_id": message.photo[-1].file_id  # Get the highest resolution photo
+            "photo_id": message.photo[-1].file_id
         }
 
         async with async_session() as session:

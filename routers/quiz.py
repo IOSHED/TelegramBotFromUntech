@@ -51,3 +51,8 @@ async def create_new_quiz_answers(message: Message, state: FSMContext):
 @quiz_router.message(Quiz.true_answers)
 async def create_new_quiz_true_answers(message: Message, state: FSMContext):
     await QuizController.set_quiz_true_answers(message, state)
+
+
+@quiz_router.message(Quiz.photo)
+async def create_new_quiz_photo(message: Message, state: FSMContext):
+    await QuizController.set_quiz_photo(message, state)
